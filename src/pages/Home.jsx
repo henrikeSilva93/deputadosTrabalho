@@ -8,14 +8,16 @@ export default function Home(){
     const [deputados, setDeputados] = useState([])
     const [query, setQuery] = useState("")
     const [page, setPage] = useState(1)
-    const [perPage] = useState(10)
+    const [perPage] = useState(12)
 
 
     let lastIndex = page * perPage
     let firstIndex = lastIndex - perPage
     const totalPages = Math.ceil(deputados.length / perPage)
 
-    const paginado = deputados.slice(firstIndex, lastIndex)
+    const paginado = deputados < perPage ? deputados : deputados.slice(firstIndex, lastIndex)
+
+
 
     useEffect(()=>{
        getAllDeputados().then(response => setDeputados(response.dados))
@@ -23,6 +25,7 @@ export default function Home(){
 
     const buscarDeputado = async () => {
         getDeputadoByid(query).then(response => setDeputados(response))
+        setPage(1)
     }
 
     const nextPage = ()=> {
@@ -71,16 +74,17 @@ export default function Home(){
                  ))
              }
 
-             <div>
-             <button onClick={prevPage} >Próxima</button>
+  </div>
+  <div>
+          <button onClick={prevPage} >Anterior</button>
              {page} / 
              {totalPages}
              <button onClick={nextPage}>Próxima</button>
-             </div>
-           
+         </div>
+
+               
                 
-            </div>
-         </>
+ </>
     )
       
 }
