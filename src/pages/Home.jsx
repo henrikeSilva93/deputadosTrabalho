@@ -7,8 +7,16 @@ import { getAllDeputados, getDeputadoByid } from "../service/deputados";
 export default function Home(){
     const [deputados, setDeputados] = useState([])
     const [query, setQuery] = useState("")
+    const [page, setPage] = useState(1)
+    const [perPage] = useState(10)
 
-console.log(deputados)
+
+    let lastIndex = page * perPage
+    let firstIndex = lastIndex - perPage
+    const totalPages = Math.ceil(deputados.length / perPage)
+
+    const paginado = deputados.slice(firstIndex, lastIndex)
+
     useEffect(()=>{
        getAllDeputados().then(response => setDeputados(response.dados))
     },[])
@@ -16,6 +24,24 @@ console.log(deputados)
     const buscarDeputado = async () => {
         getDeputadoByid(query).then(response => setDeputados(response))
     }
+
+    const nextPage = ()=> {
+       if(page >= totalPages) {
+           return null
+       } 
+
+       setPage(page + 1)
+       
+    }
+
+    const prevPage = ()=> {
+        if(page <= 1) {
+            return null
+        } 
+ 
+        setPage(page - 1)
+        
+     }
 
 
 
@@ -35,7 +61,7 @@ console.log(deputados)
             <div className="container">
 
              {
-                deputados && deputados.map(item =>(
+                 paginado.map(item =>(
                     <Card 
                     key={item.cod}
                     img={item.urlFoto}
@@ -44,6 +70,13 @@ console.log(deputados)
                     />
                  ))
              }
+
+             <div>
+             <button onClick={prevPage} >Próxima</button>
+             {page} / 
+             {totalPages}
+             <button onClick={nextPage}>Próxima</button>
+             </div>
            
                 
             </div>
